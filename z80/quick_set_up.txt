@@ -1,0 +1,75 @@
+How To Quickly Get A Z80 CPU Chip Running:
+
+First things first: The Z80 needs power, so hook it up to a nice clean 5 volt
+DC power supply. Connect the positive end to the CPU's pin 11, and the
+negative (ground) end to pin 29.
+
+Like most CPUs, the Z80 also needs a good clean clock signal to run. It is
+beyond the scope of this quick-start guide to describe how to make your own
+clock circuit, but once you have one, connect its output to pin 6. Note that
+the Z80 was the only major computer CPU in history which did not use dynamic
+registers, and as such, you can run it at virtually any low clock speed, such
+as 1 hertz, or even slower than that; It can even be hand-clocked via a
+push-button circuit, unlike the 6502, or just about any other CPU you could
+name.
+
+Some of the Z80's control pins must also be set for the CPU to run.
+Specifically, pin 16 (INT), 17 (NMI), 24 (WAIT), and 25 (BUSRQ) should be
+connected directly to the positive end of the power supply. Because these
+pins are all active-low (meaning they take effect when their input voltage is
+low, and are disabled when the input voltage is high), this will turn them
+off. (If they are left on, they may interfere with the CPU and stop it from
+running.)
+
+Also like most CPUs, the Z80 must be reset when it is turned on before it
+will work correctly. Therefore, you must devise a way to make the RESET pin
+(which is pin 26, and is also active-low) go low for a moment, then go high
+again. The CPU will reset itself while the pin is low, and then begin running
+once the pin goes high. There are many ways to make a simple reset circuit.
+You could hook up a timer which maintains the reset signal for a specific
+amount of time, or you could simply attach a push-button switch to the RESET
+pin to connect it to ground momentarily. Exactly how long you need to keep
+the RESET line active varies, but in general, one or two full seconds should
+be more than enough.
+
+Although not completely necessary, you should take a moment to add a
+capacitor to the CPU. It is standard practice, when wiring up CPUs, to place
+a fast capacitor (from 0.1 to 4.7 microfarads, and preferably ceramic)
+between the positive and negative voltage pins on the CPU, as close to the
+CPU as possible. This is to ensure that the DC feed line has a very low AC
+impedance. (This is called a decoupling capacitor.) Generally, none of the
+other CPU pins should require a capacitor.
+
+Remember, NEVER leave inputs on a CPU unconnected to anything. If you do so,
+they will fluctuate intermittently or "float", producing erratic results.
+
+Your Z80 is now ready to run. If you plug in your power supply and activate
+the reset line (if you haven't rigged up an automatically-triggered reset
+circuit), the Z80 will probably begin running right away. However, there are
+two problems here: First of all, you have no way of seeing if the CPU is
+actually doing something or not. Secondly, the CPU has no instructions, so it
+will probably execute random code based on the "floating" voltages it is
+receiving on the data bus pins.
+
+To make a "real" computer, you must first send the CPU some instructions via
+its data bus. You can do this by hooking it up to a ROM, but if all you want
+to do is test the CPU quickly, you can simply connect all 8 of the Z80's data
+bus pins to ground. (The use of a gentle resistor, say about 500 ohms, is
+recommended on each pin to protect the CPU, but this is not absolutely
+necessary.) Because the Z80's opcode for NOP (no operation, a do-nothing
+instruction) is 00000000, setting all the data bus pins to low voltage
+(logical zero) will make it execute NOP instructions repeatedly.
+
+If you have done all this, the Z80 is now executing NOP instructions at a
+rapid rate. You can watch the CPU in action by hooking up some LEDs to the
+address bus pins. The LEDs will flicker as the CPU busily sends out memory
+address signals to RAM or ROM chips which it believes it is getting all these
+NOPs from. If you see the LEDs flickering, congratulations, your Z80 is
+working. If not, it may be that you have the LED on a pin that is triggering
+too quickly. On A0, the lowest address bus pin, the LED would probably be
+flashing many times every second, and it may be too fast for the naked eye to
+perceive as flashing. Try moving the LED up higher. Pin A6 should flash half
+as quickly as A5, and pin A7 should flash half as quickly as A6, and so on.
+
+From here, you can connect the Z80 to a ROM chip with some bootstrap code in
+it, and add some RAM for temporary storage space. Have fun!
